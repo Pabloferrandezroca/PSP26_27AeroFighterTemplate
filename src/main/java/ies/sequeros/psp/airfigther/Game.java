@@ -59,11 +59,10 @@ public class Game extends JPanel {
                 this.gameContext);
         //CREAR E INICIAR LOS HILOS
         //HILO PARA PINTAR
+        this.gameRenderer = new GameRenderer(this.gameContext, this.gameBoard, this);
         //HILO MUSICA DE FONDO
         //HILO EFECTOS SONIDO
         //HILO DE LA FISICA
-        this.gameRenderer = new GameRenderer(
-                this.gameContext, this.gameBoard, this);
         this.physicsEngine = new PhysicsEngine(gameBoard, gameContext);
         // Iniciar los hilos
 
