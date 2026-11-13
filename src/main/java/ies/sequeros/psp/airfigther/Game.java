@@ -61,12 +61,22 @@ public class Game extends JPanel {
         //HILO PARA PINTAR
         this.gameRenderer = new GameRenderer(this.gameContext, this.gameBoard, this);
         //HILO MUSICA DE FONDO
+        Thread musicThread = new Thread(() -> {
+            try {
+                while (this.gameContext.getStatus() != GameStatus.GAME_OVER) {
+                    new javazoom.jl.player.Player(getClass().getResourceAsStream("/song1.mp3")).play();
+                }
+            } catch (Exception e) {
+            }
+        });
         //HILO EFECTOS SONIDO
+
         //HILO DE LA FISICA
         this.physicsEngine = new PhysicsEngine(gameBoard, gameContext);
         // Iniciar los hilos
 
         this.gameRenderer.start();
+        musicThread.start();
         this.physicsEngine.start();
     }
 
