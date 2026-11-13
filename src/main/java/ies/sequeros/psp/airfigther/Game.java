@@ -5,7 +5,7 @@ import ies.sequeros.psp.airfigther.base.Size;
 import ies.sequeros.psp.airfigther.base.Speed;
 import ies.sequeros.psp.airfigther.engine.GameContext;
 import ies.sequeros.psp.airfigther.engine.GameStatus;
-
+import ies.sequeros.psp.airfigther.engine.PhysicsEngine;
 import ies.sequeros.psp.airfigther.input.KeyBoardStatus;
 import ies.sequeros.psp.airfigther.model.Player;
 import ies.sequeros.psp.airfigther.view.GameRenderer;
@@ -27,6 +27,7 @@ public class Game extends JPanel {
 
     private final GameBoard gameBoard;
     private final GameRenderer gameRenderer;
+    private final PhysicsEngine physicsEngine;
     //private volatile Player player;
 
 
@@ -63,10 +64,11 @@ public class Game extends JPanel {
         //HILO DE LA FISICA
         this.gameRenderer = new GameRenderer(
                 this.gameContext, this.gameBoard, this);
-
+        this.physicsEngine = new PhysicsEngine(gameBoard, gameContext);
         // Iniciar los hilos
 
         this.gameRenderer.start();
+        this.physicsEngine.start();
     }
 
 
@@ -112,10 +114,16 @@ public class Game extends JPanel {
         this.gameContext.setStatus(GameStatus.GAME_OVER);
         try {
 
-            if (gameRenderer != null)
+            if (gameRenderer != null){
                 gameRenderer.join();
+            }
+            
+            if (physicsEngine != null){
+                physicsEngine.join();
+            }
+            
             System.out.println("fin de juego");
-        System.exit(0);
+            System.exit(0);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

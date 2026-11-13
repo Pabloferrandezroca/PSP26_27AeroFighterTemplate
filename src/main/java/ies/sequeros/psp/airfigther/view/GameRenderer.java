@@ -4,6 +4,7 @@ import ies.sequeros.psp.airfigther.GameBoard;
 import ies.sequeros.psp.airfigther.engine.GameContext;
 import ies.sequeros.psp.airfigther.engine.GameStatus;
 import ies.sequeros.psp.airfigther.model.Bullet;
+import ies.sequeros.psp.airfigther.model.Element;
 import ies.sequeros.psp.airfigther.model.Player;
 import ies.sequeros.psp.airfigther.model.enemy.Enemy;
 
@@ -32,6 +33,7 @@ public class GameRenderer extends Thread {
         this.gameContext = gameContext;
         this.gameBoard = gameBoard;
         this.gamePanel = gamePanel;
+        this.setName("GameRenderer");
         this.setDaemon(true);
     }
 
@@ -39,7 +41,7 @@ public class GameRenderer extends Thread {
 
     public void run() {
         long lastUpdateTime = System.nanoTime();
-        while (true) {
+        while (gameContext.getStatus()!=GameStatus.GAME_OVER) {
             long now = System.nanoTime();
             long updateLength = now - lastUpdateTime;
             lastUpdateTime = now;
@@ -98,24 +100,37 @@ public class GameRenderer extends Thread {
             this.renderBackground(g,width,height);
             //dibujar los elementos
             this.renderPlayer(g);
+            this.renderDebug(g);
 
             //RECORRER EL RESTO DE ELEMNTOS Y DIBUJARLO
+            for (Element e: gameBoard.getElements())
+                    g.drawImage(ImageResource.BOMBARDERO.getImage(),
+                            (int)e.getPosition().getX(),
+                            (int)e.getPosition().getY(),
+                            e.getSize().getWidth(), e.getSize().getHeight(),null);
 
             //MIRAR SI ESTA EN MODO DEBUG Y DIBUJAR EL RECUADRO
-
             g.setColor(Color.BLACK);
 
             //DIBUJAR LOS DIFERENTES TEXTOS EN FUNCIÓN DEL ESTADO
             //MENU-> PULSAR P PARA INICIAR
             //PAUSED -> TEXTO PAUSED
             //PLAYING->MOSTRAR EL HUD
+            if(gameContext.getStatus()!=GameStatus.PLAYING){
+                this.hud.render(g, gameBoard.getPlayer(), gameContext, width);
+            }
 
         }
     }
 
     public void renderDebug(Graphics g) {
-
-
+        Player p = gameBoard.getPlayer();
+        g.drawImage(
+                ImageResource.PLAYER.getImage(),
+                (int)p.getPosition().getX(),
+                (int)p.getPosition().getY(),
+                p.getSize().getWidth(), p.getSize().getHeight(),null
+        );
 
     }
 
